@@ -8,26 +8,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     if (!empty($username) && !empty($password)) {
-        // Prépare la requête pour trouver l'utilisateur
         $stmt = $pdo->prepare("SELECT id, nom_utilisateur, mot_de_passe, role FROM utilisateurs WHERE nom_utilisateur = :username");
         $stmt->execute(['username' => $username]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // Vérifie si l'utilisateur existe et si le mot de passe est correct
         if ($user && password_verify($password, $user['mot_de_passe'])) {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['nom_utilisateur'];
             $_SESSION['role'] = $user['role'];
 
-            // Redirige l'utilisateur selon son rôle
             if ($user['role'] === 'administrateur') {
-                header("Location: admin_dashboard.php");  // Page admin
+                header("Location: admin_dashboard.php"); 
             } else {
-                header("Location: films.php");  // Page d'accueil pour utilisateurs
+                header("Location: films.php"); 
             }
             exit();
         } else {
-            // Redirige avec un message d'erreur si les identifiants sont incorrects
             header("Location: login.php?error=invalid");
             exit();
         }
@@ -36,7 +32,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 } else {
-    // Redirige si la méthode n'est pas POST
     header("Location: login.php");
     exit();
 }
